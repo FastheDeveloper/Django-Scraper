@@ -6,7 +6,7 @@ class Event(models.Model):
     """Normalized event representation persisted after ingestion."""
 
     title = models.CharField(max_length=255)
-    start_date = models.DateTimeField()
+    start_date = models.DateTimeField(null=True, blank=True)
     venue_name = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=100)
     category = models.CharField(max_length=100, blank=True)

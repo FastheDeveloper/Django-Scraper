@@ -18,5 +18,8 @@ class BaseEventClient(ABC):
     def fetch(self) -> Iterable[Mapping[str, Any]]:
         """Retrieve raw event payloads from an upstream provider."""
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(provider={self.provider_name!r})"
+
 
 __all__ = ["BaseEventClient"]
