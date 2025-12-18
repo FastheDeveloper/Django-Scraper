@@ -1,15 +1,16 @@
 import os
 from typing import Sequence
 
-from django.core.management.base import BaseCommand, CommandParser, CommandError
+from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from events.services.ingestion import ingest_with_report
 
-PROVIDERS = ("fixtures", "google")
+PROVIDERS = ("fixtures", "google", "apify_facebook")
 
 
 class Command(BaseCommand):
-    help = "Ingest events using local fixtures or the Google client."
+    help = "Ingest events using fixtures, Google, or Apify providers."
 
     def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
@@ -27,13 +28,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         provider_key: str = options["source"]
-        client = self._build_client(provider_key)
-
         cities: Sequence[str] | None = options.get("cities")
-        allowed_cities = (
-            {city.strip().title() for city in cities if city.strip()}
+        city_filters = (
+            [city.strip() for city in cities if city and city.strip()]
             if cities
             else None
+        )
+
+        client = self._build_client(provider_key, city_filters)
+
+        allowed_cities = (
+            {city.title() for city in city_filters} if city_filters else None
         )
 
         report = ingest_with_report(client, allowed_cities=allowed_cities)
@@ -53,7 +58,7 @@ class Command(BaseCommand):
             for error in report.errors:
                 self.stderr.write(self.style.ERROR(error))
 
-    def _build_client(self, provider_key: str):
+    def _build_client(self, provider_key: str, cities: Sequence[str] | None):
         if provider_key == "fixtures":
             from events.services.clients.fixture_client import FixtureEventClient
 
@@ -68,4 +73,15 @@ class Command(BaseCommand):
                     "GOOGLE_API_KEY and GOOGLE_CSE_ID environment variables are required."
                 )
             return GoogleEventClient(api_key=api_key, cse_id=cse_id)
+        if provider_key == "apify_facebook":
+            from events.services.clients.apify_facebook_client import ApifyFacebookClient
+
+            if not settings.APIFY_TOKEN:
+                raise CommandError("APIFY_TOKEN must be configured for Apify ingestion.")
+            return ApifyFacebookClient(
+                api_token=settings.APIFY_TOKEN,
+                actor_id=settings.APIFY_ACTOR_ID,
+                max_events=settings.APIFY_MAX_EVENTS,
+                cities=cities,
+            )
         raise CommandError(f"Unsupported provider '{provider_key}'")

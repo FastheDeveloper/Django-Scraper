@@ -116,10 +116,44 @@ def normalize_url(value: Any) -> str | None:
     return normalized or None
 
 
+def normalize_apify_facebook_item(
+    raw: Mapping[str, Any], fallback_city: str | None = None
+) -> dict[str, Any]:
+    """Normalize an Apify Facebook event entry."""
+    location = raw.get("location") or {}
+    inferred_city = infer_city(
+        location.get("city"),
+        location.get("name"),
+        fallback_city,
+    )
+    metadata = {
+        "title": clean_title(raw.get("name")),
+        "start_date": parse_datetime(raw.get("utcStartDate")),
+        "venue_name": clean_title(location.get("name")),
+        "city": inferred_city,
+        "category": clean_title(raw.get("organizedBy")),
+        "event_url": normalize_url(raw.get("url")),
+        "source": "apify_facebook_events",
+        "raw_payload": dict(raw),
+    }
+    return metadata
+
+
+def infer_city(*candidates: Any) -> str:
+    """Pick the first candidate that normalizes to a supported city."""
+    for candidate in candidates:
+        normalized = normalize_city(candidate)
+        if normalized:
+            return normalized
+    return ""
+
+
 __all__ = [
     "normalize_places_item",
     "normalize_cse_item",
+    "normalize_apify_facebook_item",
     "normalize_city",
+    "infer_city",
     "clean_title",
     "normalize_url",
 ]

@@ -11,7 +11,12 @@ from django.db import transaction
 from events.models import Event
 
 from .clients.base import BaseEventClient
-from .sanitation import normalize_cse_item, normalize_places_item
+from .sanitation import (
+    normalize_apify_facebook_item,
+    normalize_cse_item,
+    normalize_places_item,
+    normalize_city,
+)
 
 
 @dataclass
@@ -34,7 +39,14 @@ def ingest_with_report(
     client: BaseEventClient, allowed_cities: Sequence[str] | None = None
 ) -> IngestionReport:
     """Run ingestion, optionally restricting to cities, and return stats."""
-    allowed = {city.strip() for city in allowed_cities} if allowed_cities else None
+    allowed = None
+    if allowed_cities:
+        normalized_allowed = set()
+        for city in allowed_cities:
+            normalized = normalize_city(city)
+            if normalized:
+                normalized_allowed.add(normalized)
+        allowed = normalized_allowed
     report = IngestionReport()
     with transaction.atomic():
         for payload in client.fetch():
@@ -66,6 +78,15 @@ def iter_normalized(payload: Mapping[str, object]) -> Iterable[Mapping[str, obje
     elif "items" in payload:
         for item in payload["items"]:
             yield normalize_cse_item(item)
+    elif "apify_raw_item" in payload:
+        fallback_city = payload.get("fallback_city")
+        normalized = normalize_apify_facebook_item(
+            payload["apify_raw_item"], fallback_city
+        )
+        requested = normalize_city(fallback_city) if fallback_city else ""
+        if requested and normalized["city"] and normalized["city"] != requested:
+            return
+        yield normalized
 
 
 def upsert_event(data: Mapping[str, object]) -> tuple[Event, bool]:

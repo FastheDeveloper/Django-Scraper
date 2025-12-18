@@ -28,9 +28,12 @@ Django loads configuration from `.env` via `python-dotenv`. Required settings:
 | `DJANGO_SECRET_KEY` | Any non-empty string for dev |
 | `DJANGO_DEBUG` | `true`/`false` |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated list (e.g. `127.0.0.1,localhost`) |
-| `EVENT_PROVIDER` | `fixtures` (default) or `google` |
+| `EVENT_PROVIDER` | `fixtures`, `google`, or `apify_facebook` |
 | `GOOGLE_API_KEY` | Placeholder for future Google client |
 | `GOOGLE_CSE_ID` | Placeholder for future Google client |
+| `APIFY_TOKEN` | Required when using Apify |
+| `APIFY_ACTOR_ID` | Defaults to `UZBnerCFBo5FgGouO` |
+| `APIFY_MAX_EVENTS` | Max results per Apify actor run (default `30`) |
 
 Fixture-only development only needs the first four keys; Google keys will be used once real API integration is enabled.
 
@@ -60,6 +63,26 @@ python manage.py ingest_events --city Johannesburg --city Pretoria --source fixt
 ```
 
 The command is idempotent and prints a summary of created/updated/skipped rows. You can omit the `--city` flags to ingest all supported cities. Once real Google credentials are available, switch providers via `EVENT_PROVIDER=google` or `--source google` and ensure `GOOGLE_API_KEY` + `GOOGLE_CSE_ID` are set in the environment.
+
+### Apify ingestion (Facebook events)
+
+1. Set the Apify credentials in `.env` (or export them):
+   ```env
+   EVENT_PROVIDER=apify_facebook
+   APIFY_TOKEN=<your-apify-token>
+   APIFY_ACTOR_ID=UZBnerCFBo5FgGouO  # override only if advised by HR
+   APIFY_MAX_EVENTS=30               # tweak to limit dataset size
+   ```
+2. Run the management command, optionally scoping cities:
+   ```bash
+   python manage.py ingest_events --city Johannesburg --city Pretoria --source apify_facebook
+   ```
+3. Verify data via the API (should now show `"source": "apify_facebook_events"`):
+   ```bash
+   curl "http://127.0.0.1:8000/api/events?city=Johannesburg"
+   ```
+
+Fixtures remain available (set `EVENT_PROVIDER=fixtures`) so reviewers without an Apify token can still run the project.
 
 ## API usage
 
