@@ -84,6 +84,27 @@ The command is idempotent and prints a summary of created/updated/skipped rows. 
 
 Fixtures remain available (set `EVENT_PROVIDER=fixtures`) so reviewers without an Apify token can still run the project.
 
+### Railway deployment quick-test
+
+When deployed on Railway (using the baked Dockerfile + Postgres), bootstrap the remote database with:
+
+```bash
+railway run python manage.py migrate
+railway run python manage.py ingest_events --city Johannesburg --city Pretoria --source apify_facebook
+```
+
+Then hit the hosted API, e.g.:
+
+```
+https://django-scraper-production-0c4d.up.railway.app/api/events?city=Johannesburg&page_size=10
+
+Need to fall back to fixtures remotely? Swap the source flag:
+
+```bash
+railway run python manage.py ingest_events --city Johannesburg --city Pretoria --source fixtures
+```
+```
+
 ## API usage
 
 - `GET /api/health` → `{ "status": "ok" }`
