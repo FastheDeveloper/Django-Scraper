@@ -1,0 +1,37 @@
+{
+  "results": [
+    {
+      "place_id": "pta-001",
+      "name": "Union Buildings Sunrise Run",
+      "formatted_address": "Union Buildings, Pretoria",
+      "city": "Pretoria",
+      "start_time": "2025-01-15T06:00:00+02:00",
+      "venue": "Union Buildings",
+      "types": ["fitness"],
+      "website": "https://runpta.example.com/union-buildings",
+      "source": "google_places"
+    },
+    {
+      "place_id": "pta-002",
+      "name": "Hazel Food Night Market",
+      "formatted_address": "Greenlyn Village Centre, Pretoria",
+      "city": "Pretoria, South Africa",
+      "start_time": "2025-01-19T17:00:00+02:00",
+      "venue": "Greenlyn Village",
+      "types": ["market"],
+      "website": "http://hazelmarket.example.com",
+      "source": "google_places"
+    },
+    {
+      "place_id": "pta-003",
+      "name": "Brooklyn Rooftop Cinema",
+      "formatted_address": "Brooklyn Mall, PTA",
+      "city": "PTA",
+      "start_time": "2025-02-05T19:30:00+02:00",
+      "venue": "Brooklyn Mall",
+      "types": ["movie_theater"],
+      "website": "https://brooklyncinema.example.com",
+      "source": "google_places"
+    }
+  ]
+}
