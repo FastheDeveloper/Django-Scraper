@@ -15,4 +15,5 @@ class EventSerializer(serializers.ModelSerializer):
             "category",
             "event_url",
             "source",
+            "raw_payload",
         ]
