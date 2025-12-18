@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "place_id": "joburg-001",
+      "name": "Braamfontein Night Market",
+      "formatted_address": "73 Juta St, Johannesburg, South Africa",
+      "city": "Johannesburg",
+      "start_time": "2025-01-18T18:00:00+02:00",
+      "venue": "Braamfontein Square",
+      "types": ["market", "nightlife"],
+      "website": "https://nightmarket.example.com/events/braam",
+      "source": "google_places"
+    },
+    {
+      "place_id": "joburg-002",
+      "name": "   Maboneng rooftop yoga   ",
+      "formatted_address": "Jeppestown Johannesburg",
+      "city": "johannesburg",
+      "start_time": "2025-01-12T07:30:00+02:00",
+      "venue": "Maboneng Precinct",
+      "types": ["fitness"],
+      "website": "http://example.com/maboneng-yoga",
+      "source": "google_places"
+    },
+    {
+      "place_id": "joburg-003",
+      "name": "Newtown Live: Afro Jazz",
+      "formatted_address": "Newtown, Johannesburg",
+      "city": "Johannesburg ",
+      "start_time": "2025-01-25T20:00:00+02:00",
+      "venue": "Newtown Music Factory",
+      "types": ["concert"],
+      "website": "www.newtownlive.example.com/shows/afro-jazz",
+      "source": "google_places"
+    },
+    {
+      "place_id": "joburg-004",
+      "name": "Soweto Heritage Walk",
+      "formatted_address": "Vilakazi St, Orlando West",
+      "city": "Soweto",
+      "start_time": "2025-02-01T09:00:00+02:00",
+      "venue": "Vilakazi Street",
+      "types": ["tour"],
+      "website": "https://heritagewalk.example.com",
+      "source": "google_places"
+    },
+    {
+      "place_id": "joburg-005",
+      "name": "Con Hill outdoor cinema",
+      "formatted_address": "11 Kotze St, Braamfontein",
+      "city": "Johannesburg, ZA",
+      "start_time": null,
+      "venue": "Constitution Hill",
+      "types": ["movie_theater"],
+      "website": "https://conhill.example.com/summer-screenings",
+      "source": "google_places"
+    },
+    {
+      "place_id": "joburg-006",
+      "name": "Braamfontein Night Market",
+      "formatted_address": "73 Juta St, Johannesburg, South Africa",
+      "city": "JHB",
+      "start_time": "2025-01-18T18:00:00+02:00",
+      "venue": "Braamfontein Square",
+      "types": ["market", "duplicate"],
+      "website": "https://nightmarket.example.com/events/braam",
+      "source": "google_places"
+    }
+  ]
+}

@@ -1,67 +1,114 @@
 # Events API Scaffold
 
-This repository contains a lightweight Django + Django REST Framework project that will power the events ingestion and API assessment. The codebase focuses on clean defaults, environment-driven configuration, and ready-to-extend service layers.
+This repository is a take-home friendly Django + Django REST Framework backend that ingests public events for Johannesburg and Pretoria using fixture data that mimics Google Places / Custom Search responses. The goal is to demonstrate ingestion, sanitation, dedupe, and API exposure, with a clear path to swap fixtures for real Google clients later.
 
 ## Requirements
 
 - macOS with Python 3.11+
-- SQLite (ships with Python)
+- SQLite (included with Python)
 
-## Quickstart
+## Setup
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env  # then fill in secrets
+cp .env.example .env  # then fill in values below
 python manage.py migrate
+python manage.py ingest_events --city Johannesburg --city Pretoria --source fixtures
 python manage.py runserver
 ```
 
-### Virtual environment notes
+### Environment variables
 
-The project expects a local `.venv/` that stays next to the source tree. The commands above use the system `python` to create and activate it. Always re-run `source .venv/bin/activate` in new shells before working on the project.
+Django loads configuration from `.env` via `python-dotenv`. Required settings:
 
-## Environment variables
+| Key | Description |
+| --- | --- |
+| `DJANGO_SECRET_KEY` | Any non-empty string for dev |
+| `DJANGO_DEBUG` | `true`/`false` |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated list (e.g. `127.0.0.1,localhost`) |
+| `EVENT_PROVIDER` | `fixtures`, `google`, or `apify_facebook` |
+| `GOOGLE_API_KEY` | Placeholder for future Google client |
+| `GOOGLE_CSE_ID` | Placeholder for future Google client |
+| `APIFY_TOKEN` | Required when using Apify |
+| `APIFY_ACTOR_ID` | Defaults to `UZBnerCFBo5FgGouO` |
+| `APIFY_MAX_EVENTS` | Max results per Apify actor run (default `30`) |
 
-Environment variables are loaded from a `.env` file at the project root using [`python-dotenv`](https://github.com/theskumar/python-dotenv). The `.env.example` file documents every required key:
+Fixture-only development only needs the first four keys; Google keys will be used once real API integration is enabled.
 
-- `DJANGO_SECRET_KEY`
-- `DJANGO_DEBUG`
-- `DJANGO_ALLOWED_HOSTS`
-- `EVENT_PROVIDER`
-- `GOOGLE_API_KEY`
-- `GOOGLE_CSE_ID`
-
-Copy `.env.example` to `.env`, fill in the secrets, and the settings module will load them automatically on startup.
-
-## Project structure
+### Project structure
 
 ```
 .
-├── config/              # Django project (settings, URLs, WSGI)
-├── events/              # Events application
-│   ├── fixtures/        # Placeholder for local fixture payloads
-│   └── services/
-│       ├── clients/     # Fixture + Google client stubs
-│       ├── ingestion.py # Orchestration placeholder
-│       └── sanitation.py# Normalization placeholder
+├── config/                   # Django project settings + URL routing
+├── events/
+│   ├── fixtures/             # Google-shaped sample payloads
+│   ├── management/commands/  # ingest_events command
+│   ├── services/             # clients, sanitation, ingestion orchestration
+│   ├── serializers.py        # Event DRF serializer
+│   ├── urls.py               # /api routes
+│   └── views.py              # Health + List endpoints
 ├── manage.py
-├── pyproject.toml       # Ruff + Black configuration
 ├── requirements.txt
 └── README.md
 ```
 
-## API surface
+## Ingestion
 
-`/api/health` returns `{ "status": "ok" }` and proves the stack is wired. Mount future API endpoints beneath the `/api/` prefix via `events.urls`.
+Use the management command to populate the `Event` table from fixtures:
 
-## Code quality
+```bash
+python manage.py ingest_events --city Johannesburg --city Pretoria --source fixtures
+```
 
-- **Black** keeps formatting consistent: `black .`
-- **Ruff** handles linting and import order: `ruff check .`
+The command is idempotent and prints a summary of created/updated/skipped rows. You can omit the `--city` flags to ingest all supported cities. Once real Google credentials are available, switch providers via `EVENT_PROVIDER=google` or `--source google` and ensure `GOOGLE_API_KEY` + `GOOGLE_CSE_ID` are set in the environment.
 
-## Next steps
+### Apify ingestion (Facebook events)
 
-- Implement ingestion strategies inside `events/services/`
-- Flesh out DRF serializers/viewsets for delivering event data via `/api/`
+1. Set the Apify credentials in `.env` (or export them):
+   ```env
+   EVENT_PROVIDER=apify_facebook
+   APIFY_TOKEN=<your-apify-token>
+   APIFY_ACTOR_ID=UZBnerCFBo5FgGouO  # override only if advised by HR
+   APIFY_MAX_EVENTS=30               # tweak to limit dataset size
+   ```
+2. Run the management command, optionally scoping cities:
+   ```bash
+   python manage.py ingest_events --city Johannesburg --city Pretoria --source apify_facebook
+   ```
+3. Verify data via the API (should now show `"source": "apify_facebook_events"`):
+   ```bash
+   curl "http://127.0.0.1:8000/api/events?city=Johannesburg"
+   ```
+
+Fixtures remain available (set `EVENT_PROVIDER=fixtures`) so reviewers without an Apify token can still run the project.
+
+## API usage
+
+- `GET /api/health` → `{ "status": "ok" }`
+- `GET /api/events` → paginated events (10 per page). Supports query params:
+  - `?page=2`
+  - `?page_size=20`
+  - `?city=Johannesburg` (case-insensitive)
+
+Example request:
+
+```bash
+curl "http://127.0.0.1:8000/api/events?city=Pretoria&page_size=5"
+```
+
+## Code quality & tooling
+
+- Format with **Black**: `black .`
+- Lint with **Ruff**: `ruff check .`
+
+## Switching to Google later
+
+The ingestion workflow is driven by a provider interface (`events/services/clients/base.py`). Today, `FixtureEventClient` feeds local JSON. To move to real Google requests:
+
+1. Implement the HTTP logic inside `GoogleEventClient`.
+2. Set `EVENT_PROVIDER=google`, `GOOGLE_API_KEY`, and `GOOGLE_CSE_ID` in `.env`.
+3. Run `python manage.py ingest_events --source google` to fetch live data.
+
+The rest of the pipeline (sanitation, dedupe, API) stays unchanged.

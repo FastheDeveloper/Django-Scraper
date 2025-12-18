@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "title": "Pretoria Botanical twilight picnic",
+      "link": "https://pta-botanical.example.com/events/twilight",
+      "snippet": "Bring your own basket",
+      "pagemap": {
+        "metatags": [
+          {
+            "event:start_time": "2025-01-30T17:00:00+02:00",
+            "event:venue_name": "Pretoria National Botanical Garden",
+            "event:location": "Pretoria",
+            "event:category": "Outdoors"
+          }
+        ]
+      },
+      "source": "google_cse"
+    },
+    {
+      "title": "Loftus craft beer fest",
+      "link": "https://loftuslife.example.com/beerfest",
+      "snippet": "Loftus Versfeld Stadium",
+      "pagemap": {
+        "metatags": [
+          {
+            "event:start_time": "2025-02-08T13:00:00+02:00",
+            "event:venue_name": "Loftus Versfeld",
+            "event:location": "Pretoria Central",
+            "event:category": "Festival"
+          }
+        ]
+      },
+      "source": "google_cse"
+    },
+    {
+      "title": "Hazel Food Night Market",  
+      "link": "https://hazelmarket.example.com",
+      "snippet": "Tshwane foodie favorite",
+      "pagemap": {
+        "metatags": [
+          {
+            "event:start_time": null,
+            "event:venue_name": "Greenlyn Village",
+            "event:location": "City of Tshwane",
+            "event:category": "Food"
+          }
+        ]
+      },
+      "source": "google_cse"
+    }
+  ]
+}

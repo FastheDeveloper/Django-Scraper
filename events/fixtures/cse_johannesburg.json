@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+      "title": "Joburg Theatre presents Summer of Laughs!!!",
+      "htmlTitle": "Joburg Theatre presents Summer of Laughs!!!",
+      "link": "https://joburg-play.example.com/show/summer-of-laughs",
+      "snippet": "Comedy showcase in Johannesburg CBD",
+      "pagemap": {
+        "metatags": [
+          {
+            "event:start_time": "2025-02-10T20:00:00+02:00",
+            "event:venue_name": "Joburg Theatre",
+            "event:location": "Johannesburg CBD",
+            "event:category": "Comedy"
+          }
+        ]
+      },
+      "source": "google_cse"
+    },
+    {
+      "title": "Rosebank Art walk & wine",
+      "link": "https://rosebankarts.example.com/walk",
+      "snippet": "Rosebank, JHB",
+      "pagemap": {
+        "metatags": [
+          {
+            "event:start_time": "2025-01-22T17:30:00+02:00",
+            "event:venue_name": "Rosebank Art Mile",
+            "event:location": "Rosebank , Johannesburg",
+            "event:category": "Art"
+          }
+        ]
+      },
+      "source": "google_cse"
+    },
+    {
+      "title": "Melville craft fair",
+      "link": "melvillefair.example.com",
+      "snippet": "Craft makers in Melville",
+      "pagemap": {
+        "metatags": [
+          {
+            "event:start_time": "2025-01-28",
+            "event:venue_name": "7th Street",
+            "event:location": "Melville, Joburg",
+            "event:category": "Makers"
+          }
+        ]
+      },
+      "source": "google_cse"
+    }
+  ]
+}

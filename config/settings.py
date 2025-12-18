@@ -38,6 +38,12 @@ ALLOWED_HOSTS = [
 EVENT_PROVIDER = os.getenv("EVENT_PROVIDER", "fixtures")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID", "")
+APIFY_TOKEN = os.getenv("APIFY_TOKEN", "")
+APIFY_ACTOR_ID = os.getenv("APIFY_ACTOR_ID", "UZBnerCFBo5FgGouO")
+try:
+    APIFY_MAX_EVENTS = int(os.getenv("APIFY_MAX_EVENTS", "30"))
+except ValueError:
+    APIFY_MAX_EVENTS = 30
 
 
 # Application definition
