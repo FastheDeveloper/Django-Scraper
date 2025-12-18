@@ -6,3 +6,4 @@ python-dateutil==2.9.0.post0
 black==25.11.0
 ruff==0.14.9
 apify-client==1.6.1
+gunicorn==22.0.0
